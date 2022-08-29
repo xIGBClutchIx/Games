@@ -1,13 +1,10 @@
 package me.clutchy.games
 
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
-import java.util.UUID
-import java.util.function.BiConsumer
-import java.util.function.Consumer
+import java.util.*
 
 class GameManager(private val api: GameAPI,
                   private val baseTypes: HashMap<String, Class<out Game>> = hashMapOf(), // sg - BASE GAME
