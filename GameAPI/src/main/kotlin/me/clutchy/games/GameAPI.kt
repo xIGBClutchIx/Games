@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.annotation.plugin.ApiVersion
 import org.bukkit.plugin.java.annotation.plugin.Plugin
 import java.io.File
 
+// NOTE Lots is changing and stuff is hard coded. If it looks weird probably because it is duct tape to make it work at any point.
+
 @Plugin(name = "GameAPI", version = "1.0.0")
 @Commands(Command(name = "game"))
 @ApiVersion(ApiVersion.Target.v1_19)
