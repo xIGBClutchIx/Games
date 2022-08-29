@@ -8,5 +8,5 @@
  */
 
 rootProject.name = "Games"
-include "API"
+include "GameAPI"
 include "SurvivalGames"
