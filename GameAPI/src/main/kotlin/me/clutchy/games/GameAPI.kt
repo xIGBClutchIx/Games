@@ -14,6 +14,8 @@ import java.io.File
 @Libraries(Library("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
 class GameAPI: JavaPlugin() {
 
+    private val gameManager: GameManager = GameManager(this)
+
     override fun onEnable() {
         val world = server.getWorld("Lobby")
         if (world == null) {
@@ -28,10 +30,14 @@ class GameAPI: JavaPlugin() {
             }
             Bukkit.createWorld(WorldCreator("Lobby").generateStructures(false).generator(VoidGenerator()))
         }
-        server.pluginManager.registerEvents(TestListener(), this)
+        server.pluginManager.registerEvents(BasicListener(), this)
     }
 
     override fun onDisable() {
 
+    }
+
+    fun registerGame(game: Game) {
+        gameManager.registerGame(game)
     }
 }

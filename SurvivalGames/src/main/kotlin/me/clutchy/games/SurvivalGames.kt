@@ -1,26 +1,20 @@
 package me.clutchy.games
 
-import me.clutchy.games.Game.RunMode
+import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.java.annotation.dependency.Dependency
+import org.bukkit.plugin.java.annotation.dependency.DependsOn
+import org.bukkit.plugin.java.annotation.dependency.Libraries
+import org.bukkit.plugin.java.annotation.dependency.Library
+import org.bukkit.plugin.java.annotation.plugin.ApiVersion
+import org.bukkit.plugin.java.annotation.plugin.Plugin
 
-class SurvivalGames: Game {
+@Plugin(name = "SurvivalGames", version = "1.0.0")
+@ApiVersion(ApiVersion.Target.v1_19)
+@DependsOn(Dependency("GameAPI"))
+class SurvivalGames: JavaPlugin() {
 
-    override fun onLobbyStart() {}
-    override fun onLobbyEnd() {}
-    override fun onLobbyTick() {}
-    override fun onGameStarting() {}
-    override fun onGameStart() {}
-    override fun onGameEnd() {}
-    override fun onGameTick() {}
-
-    override fun minimumPlayers(): Int {
-        return 2
-    }
-
-    override fun maximumPlayers(): Int {
-        return 10
-    }
-
-    override fun runMode(): RunMode {
-        return RunMode.AUTOMATIC
+    override fun onEnable() {
+        (Bukkit.getServer().pluginManager.getPlugin("GameAPI") as GameAPI).registerGame(SurvivalGamesGame())
     }
 }
