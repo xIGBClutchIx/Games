@@ -7,15 +7,16 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
 class GameManager(private val api: GameAPI,
-                  private val baseTypes: HashMap<String, Class<out Game>> = hashMapOf(), // sg - BASE GAME
+                  val baseTypes: HashMap<String, Class<out Game>> = hashMapOf(), // sg - BASE GAME
                   private val games: HashMap<String, Game?> = hashMapOf(), // sg-random - running game
                   private val tasks: HashMap<String, BukkitTask> = hashMapOf(), // sg-random - task
                   private val states: HashMap<String, Game.RunState> = hashMapOf(), // sg-random - state
                   val players: HashMap<String, MutableList<UUID>> = hashMapOf() // sg-random - list players
 ) {
     // Automatic registering a base game
-    fun registerGame(id: String, game: Class<out Game>) {
+    fun registerGame(api: GameAPI, id: String, game: Class<out Game>) {
         baseTypes[id] = game
+        api.logger.info("Added type: $id")
     }
 
     // Command - /game create sg - make a new game with type
@@ -23,13 +24,14 @@ class GameManager(private val api: GameAPI,
         // Check we have that base game type
         if (baseTypes.containsKey(game)) {
             // TODO: Check random and shit - boring bleh
-            val randomGameID: String = game + "-" + UUID::randomUUID.toString()
+            val randomGameID: String = game + "-" + UUID.randomUUID().toString()
             // Create a new game from class
             val nameGameFromType = baseTypes[game]?.getConstructor()?.newInstance()
             games[randomGameID] = nameGameFromType
             tasks[randomGameID] = Bukkit.getScheduler().runTaskLaterAsynchronously(api, GameRunnable(nameGameFromType), 20)
             states[randomGameID] = Game.RunState.GAME_STARTING
             players[randomGameID] = mutableListOf()
+            sender.sendMessage("Game created: $randomGameID")
         } else {
             sender.sendMessage("Sorry this game type is not registered!")
         }
@@ -42,18 +44,18 @@ class GameManager(private val api: GameAPI,
             tasks.remove(gameId)
             states.remove(gameId)
             // Remove from any current games
-            players.forEach { (foundGameID, players) ->
-                players.forEach { player ->
-                    // Inform all players in game
-                    val playerInGame =  Bukkit.getPlayer(player)
-                    playerInGame?.sendMessage("Game killed: $foundGameID")
-                    // Send to Lobby
-                    playerInGame?.sendToLobby()
-                }
-                if (sender is Player && !players.contains(sender.uniqueId)) sender.sendMessage("Game killed: $foundGameID")
+            val foundSender = (sender is Player && players[gameId]?.contains(sender.uniqueId) == true)
+            players[gameId]?.forEach { playerFound ->
+                // Inform all players in game
+                val playerInGame =  Bukkit.getPlayer(playerFound)
+                playerInGame?.sendMessage("Game killed: $gameId")
+                // Send to Lobby
+                playerInGame?.sendToLobby()
             }
             // Remove players after
             players.remove(gameId)
+            // If sender was not in game
+            if (!foundSender) sender.sendMessage("Game killed: $gameId")
         } else {
             sender.sendMessage("Game doesn't exist!")
         }

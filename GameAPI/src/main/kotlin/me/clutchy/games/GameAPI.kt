@@ -14,7 +14,7 @@ import java.io.File
 @Plugin(name = "GameAPI", version = "1.0.0")
 @Commands(Command(name = "game"))
 @ApiVersion(ApiVersion.Target.v1_19)
-@Libraries(Library("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
+@Libraries(Library("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
 class GameAPI: JavaPlugin() {
 
     val gameManager: GameManager = GameManager(this)
@@ -42,6 +42,6 @@ class GameAPI: JavaPlugin() {
     }
 
     fun registerGame(id: String, game: Class<out Game>) {
-        gameManager.registerGame(id, game)
+        gameManager.registerGame(this, id, game)
     }
 }

@@ -9,31 +9,34 @@ class GameCommand: CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
         if (args.isNullOrEmpty()) {
-            sender.sendMessage("/game - [list, create, kill, find, join, remove]")
+            sender.sendMessage("/game - [types, list, create, kill, find, join, remove]")
             return false
         } else {
             val gameAPI: GameAPI = Bukkit.getServer().pluginManager.getPlugin("GameAPI") as GameAPI
             val formattedArgs: List<String> = args.map { s -> s.lowercase() }
             when (formattedArgs[0]) {
+                "types" -> {
+                    sender.sendMessage("Types List - " + gameAPI.gameManager.baseTypes.keys)
+                }
                 "list" -> {
-                    sender.sendMessage("Game Type List - " + gameAPI.gameManager.players.keys)
+                    sender.sendMessage("Games List - " + gameAPI.gameManager.players.keys)
                 }
                 "create" -> {
-                    if (args.getOrNull(1) == null) {
+                    if (args.getOrNull(1) != null) {
                         gameAPI.gameManager.createGame(sender, args[1])
                     } else {
                         sender.sendMessage("/game create - [type]")
                     }
                 }
                 "kill" -> {
-                    if (args.getOrNull(1) == null) {
+                    if (args.getOrNull(1) != null) {
                         gameAPI.gameManager.killGame(sender, args[1])
                     } else {
                         sender.sendMessage("/game kill - [type]")
                     }
                 }
                 "find" -> {
-                    if (args.getOrNull(1) == null) {
+                    if (args.getOrNull(1) != null) {
                         val player = Bukkit.getPlayerUniqueId(args[1])
                         if (player != null) {
                             gameAPI.gameManager.findPlayer(sender, player)
@@ -45,8 +48,8 @@ class GameCommand: CommandExecutor {
                     }
                 }
                 "join" -> {
-                    if (args.getOrNull(1) == null) {
-                        if (args.getOrNull(2) == null) {
+                    if (args.getOrNull(1) != null) {
+                        if (args.getOrNull(2) != null) {
                             // TODO offline players
                             val player = Bukkit.getPlayer(args[2])
                             if (player != null) {
@@ -63,7 +66,7 @@ class GameCommand: CommandExecutor {
                     }
                 }
                 "remove" -> {
-                    if (args.getOrNull(1) == null) {
+                    if (args.getOrNull(1) != null) {
                         // TODO offline players
                         val player = Bukkit.getPlayer(args[1])
                         if (player != null) {
@@ -76,7 +79,7 @@ class GameCommand: CommandExecutor {
                     }
                 }
                 else -> {
-                    sender.sendMessage("/game - [list, create, kill, find, join, remove]")
+                    sender.sendMessage("/game - [types, list, create, kill, find, join, remove]")
                 }
             }
         }
