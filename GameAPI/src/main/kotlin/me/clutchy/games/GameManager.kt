@@ -8,14 +8,15 @@ import java.util.UUID
 import java.util.function.BiConsumer
 
 class GameManager(private val api: GameAPI,
-                  private val baseTypes: HashMap<String, Game> = hashMapOf(), // sg - BASE GAME
+                  private val baseTypes: HashMap<String, Class<out Game>> = hashMapOf(), // sg - BASE GAME
                   private val games: HashMap<String, Game?> = hashMapOf(), // sg-random - running game
                   private val tasks: HashMap<String, BukkitTask> = hashMapOf(), // sg-random - task
+                  private val states: HashMap<String, Game.RunState> = hashMapOf(), // sg-random - state
                   val players: HashMap<String, MutableList<UUID>> = hashMapOf() // sg-random - list players
 ) {
     // Automatic registering a base game
-    fun registerGame(game: Game) {
-        baseTypes[game.id()] = game
+    fun registerGame(id: String, game: Class<out Game>) {
+        baseTypes[id] = game
     }
 
     // Command - /game create sg
@@ -24,9 +25,11 @@ class GameManager(private val api: GameAPI,
         if (baseTypes.containsKey(game)) {
             // TODO: Check random and shit - boring bleh
             val randomGameID: String = game + "-" + UUID::randomUUID.toString()
-            val foundGame = baseTypes[game]
-            games[randomGameID] = foundGame
-            tasks[randomGameID] = Bukkit.getScheduler().runTaskLaterAsynchronously(api, GameRunnable(foundGame), 20)
+            // Create a new game from class
+            val nameGameFromType = baseTypes[game]?.getConstructor()?.newInstance()
+            games[randomGameID] = nameGameFromType
+            tasks[randomGameID] = Bukkit.getScheduler().runTaskLaterAsynchronously(api, GameRunnable(nameGameFromType), 20)
+            states[randomGameID] = Game.RunState.GAME_STARTING
             players[randomGameID] = mutableListOf()
         } else {
             player.sendMessage("Sorry this game type is not registered!")

@@ -37,7 +37,7 @@ class GameAPI: JavaPlugin() {
 
     }
 
-    fun registerGame(game: Game) {
-        gameManager.registerGame(game)
+    fun registerGame(id: String, game: Class<out Game>) {
+        gameManager.registerGame(id, game)
     }
 }

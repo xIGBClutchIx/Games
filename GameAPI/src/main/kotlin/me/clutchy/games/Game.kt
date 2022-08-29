@@ -2,8 +2,6 @@ package me.clutchy.games
 
 interface Game {
 
-    fun id(): String
-
     fun minimumPlayers(): Int = 2
     fun maximumPlayers(): Int = 10
 
@@ -16,8 +14,6 @@ interface Game {
     fun onGameTick()
     fun onGameEnd()
 
-    // TODO: Have to move run state out to the manager?
-    fun runState(): RunState = RunState.LOBBY_START
     fun runMode(): RunMode = RunMode.AUTOMATIC
 
     enum class RunState {
